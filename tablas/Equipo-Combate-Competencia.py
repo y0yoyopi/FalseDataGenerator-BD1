@@ -23,7 +23,7 @@ def generar_datos_equipo(num_equipos):
         equipo = {
             "ID_equipo": i,
             "nombre": f"Equipo {i}",
-            "ID_arte_marcial": random.randint(1, 5),  # 5 artes marciales fijas
+            "ID_arte_marcial": random.randint(1, 5),  # 5 artes marciales predefinidas
         }
         equipos.append(equipo)
     return equipos
@@ -74,26 +74,26 @@ def generar_tablas_restantes():
     tamanos = [1000, 10000, 100000, 1000000]
 
     for tamano in tamanos:
-        # Generar equipos (escalar con el tamaño base)
-        equipos = generar_datos_equipo(tamano // 10)  # Ejemplo: 1 equipo por cada 10 personas
-        guardar_csv(equipos, output_dirs["equipos"], f"equipos_{len(equipos)}.csv")
+        # Generar y guardar equipos para cada tamaño
+        equipos = generar_datos_equipo(tamano)
+        guardar_csv(equipos, output_dirs["equipos"], f"equipos_{tamano}.csv")
 
-        # Generar competencias (escalar con el tamaño base)
-        competencias = generar_datos_competencia(tamano // 100)  # Ejemplo: 1 competencia por cada 100 personas
-        guardar_csv(competencias, output_dirs["competencias"], f"competencias_{len(competencias)}.csv")
+        # Generar y guardar competencias para cada tamaño
+        competencias = generar_datos_competencia(tamano)
+        guardar_csv(competencias, output_dirs["competencias"], f"competencias_{tamano}.csv")
 
         # Cargar atletas y jueces ya generados
         atletas = pd.read_csv(f"csv/Atletas/atletas_{tamano}.csv", sep=";")
         jueces = pd.read_csv(f"csv/Jueces/jueces_{tamano}.csv", sep=";")
 
-        # Generar combates
+        # Generar y guardar combates para cada tamaño
         combates = generar_datos_combate(
-            tamano // 2,  # Ejemplo: 1 combate por cada 2 personas
+            tamano,  # Combates igual al tamaño total
             atletas["ID_persona"].tolist(),
             jueces["ID_persona"].tolist(),
             range(1, len(competencias) + 1),
         )
-        guardar_csv(combates, output_dirs["combates"], f"combates_{len(combates)}.csv")
+        guardar_csv(combates, output_dirs["combates"], f"combates_{tamano}.csv")
 
 if __name__ == "__main__":
     generar_tablas_restantes()
